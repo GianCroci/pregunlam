@@ -187,7 +187,7 @@
             overflow: hidden;
         }
 
-        /* ===== Ruleta estilo Preguntados ===== */
+
 
         .category-selector {
             position: relative;
@@ -224,12 +224,12 @@
             overflow: hidden;
         }
 
-        /* Iconos alineados un poco más a la izquierda */
+
         .wheel-segment {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform-origin: 0 -70px; /* distancia desde el centro */
+            transform-origin: 0 -70px;
             width: 24px;
             height: 24px;
             font-size: 22px;
@@ -237,7 +237,7 @@
             pointer-events: none;
         }
 
-        /* 360 / 5 = 72°, ajuste fino */
+
         .seg-1 { transform: rotate(20deg) translateY(-85px) rotate(-20deg); }
         .seg-2 { transform: rotate(100deg) translateY(-60px) rotate(-102deg); }
         .seg-3 { transform: rotate(182deg) translateY(-60px) rotate(-174deg); }
@@ -275,7 +275,7 @@
             color: #6b7280;
         }
 
-        /* === Flecha naranja apuntando hacia ARRIBA === */
+
         .wheel-container::before {
             content: "";
             position: absolute;
@@ -286,7 +286,7 @@
             height: 0;
             border-left: 12px solid transparent;
             border-right: 12px solid transparent;
-            border-top: 18px solid #f97316;   /* punta hacia arriba */
+            border-top: 18px solid #f97316;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
             z-index: 20;
         }
@@ -676,9 +676,7 @@
             display: none;
         }
 
-        /* ============================
-           NUEVO DISEÑO MODAL REPORTE
-           ============================ */
+
 
         .modal-reporte-overlay {
             position: fixed;
@@ -742,7 +740,7 @@
             box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.25);
         }
 
-        /* Mensajes de estado */
+
         .reporte-msg {
             margin-top: 5px;
             font-size: 13px;
@@ -796,7 +794,7 @@
             background: #000;
         }
 
-        /* Botón que abre el modal (lo dejamos igual) */
+
         #btn-abrir-reporte {
             background: var(--glass);
             border: 2px solid var(--border);
@@ -819,6 +817,264 @@
             transform: translateY(-2px);
             box-shadow: var(--shadow-sm);
             border-color: rgba(113, 128, 150, 0.3);
+        }
+
+
+
+        .vista-intermedia-container {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .vista-intermedia-card {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            padding: 32px 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(72, 187, 120, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vista-intermedia-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .resultado-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            position: relative;
+            animation: iconPulse 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .resultado-icon.correcto {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            box-shadow: 
+                0 8px 25px rgba(72, 187, 120, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .resultado-icon.correcto::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .resultado-icon.incorrecto {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            box-shadow: 
+                0 8px 25px rgba(245, 101, 101, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .resultado-icon.incorrecto::after {
+            content: '✗';
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .resultado-icon.terminado {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            box-shadow: 
+                0 8px 25px rgba(245, 101, 101, 0.3),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .resultado-icon.terminado::after {
+            content: '✗';
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes iconPulse {
+            0% { 
+                transform: scale(0.3) rotate(-180deg);
+                opacity: 0;
+            }
+            70% { 
+                transform: scale(1.1) rotate(10deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .resultado-titulo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .resultado-titulo.correcto {
+            color: #22543d;
+            background: linear-gradient(135deg, #38a169, #48bb78);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .resultado-titulo.incorrecto {
+            color: #742a2a;
+            background: linear-gradient(135deg, #e53e3e, #f56565);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .resultado-titulo.terminado {
+            color: #742a2a;
+            background: linear-gradient(135deg, #e53e3e, #f56565);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .explicacion-contenido {
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border-left: 4px solid rgba(72, 187, 120, 0.3);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-reporte,
+        .btn-continuar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 140px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-reporte {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .btn-reporte:hover {
+            background: linear-gradient(135deg, #dd6b20, #c05621);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
+        }
+
+        .btn-continuar {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-continuar:hover {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-reporte:active,
+        .btn-continuar:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-icon {
+            font-size: 1.1rem;
+            display: inline-block;
+        }
+
+        .btn-text {
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        @keyframes fadeInSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+
+        @media (max-width: 640px) {
+            .vista-intermedia-card {
+                margin: 16px;
+                padding: 24px 20px;
+                max-width: none;
+            }
+
+            .resultado-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+
+            .resultado-titulo {
+                font-size: 1.3rem;
+            }
+
+            .botones-accion {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-reporte,
+            .btn-continuar {
+                min-width: auto;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -877,18 +1133,29 @@
                     <div id="opciones"></div>
                 </div>
                 
-                <!-- Vista intermedia post-respuesta -->
-                <div id="vistaIntermedia" class="question-box hidden" style="text-align: center; padding: 24px;">
-                    <div id="resultadoRespuesta" class="result-message" style="font-size: 18px; font-weight: 600; margin-bottom: 20px;"></div>
-                    <div id="explicacionRespuesta" class="explanation-message" style="margin-bottom: 24px; color: var(--text-secondary);"></div>
-                    
-                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                        <button type="button" class="btn outline" id="btn-reportar-intermedia" style="background: var(--warning); color: white; border: none;">
-                            🚨 Reportar Pregunta
-                        </button>
-                        <button type="button" class="btn primary" id="btn-seguir-jugando" style="background: var(--primary); color: white; border: none;">
-                            ▶️ Seguir Jugando
-                        </button>
+
+                <div id="vistaIntermedia" class="vista-intermedia-container hidden">
+                    <div class="vista-intermedia-card">
+                        <!-- Icono de resultado -->
+                        <div id="iconoResultado" class="resultado-icon"></div>
+                        
+                        <!-- Mensaje principal -->
+                        <div id="resultadoRespuesta" class="resultado-titulo"></div>
+                        
+                        <!-- Explicación -->
+                        <div id="explicacionRespuesta" class="explicacion-contenido"></div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="botones-accion">
+                            <button type="button" id="btn-reportar-intermedia" class="btn-reporte">
+                              
+                                <span class="btn-text">Reportar Pregunta</span>
+                            </button>
+                            <button type="button" id="btn-seguir-jugando" class="btn-continuar">
+                          
+                                <span class="btn-text">Continuar</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div id="questionPlaceholder" class="question-placeholder">
@@ -910,7 +1177,7 @@
     </div>
 </div>
 
-<!-- NUEVO MODAL DE REPORTE -->
+
 <div id="modal-reporte" class="modal-reporte-overlay" style="display:none;">
     <div class="modal-reporte-card">
         <h3 class="modal-reporte-title">Reportar pregunta</h3>
@@ -980,7 +1247,7 @@
 
         const ruletaVisual = document.getElementById('ruletaVisual');
         let giroActual = 0;
-        let categoriaRuletaActual = null; // índice 0-4 según ángulo
+        let categoriaRuletaActual = null;
 
         let timerInterval = null;
         let timeLeft = 10;
@@ -1004,9 +1271,9 @@
             if (subEl) subEl.textContent = sub;
         }
 
-        // Nuevo: convertir ángulo de la ruleta en índice de categoría (0-4)
+
         function getCategoriaPorAngulo(anguloFinal) {
-            let a = ((anguloFinal % 360) + 360) % 360; // 0-359
+            let a = ((anguloFinal % 360) + 360) % 360;
             if (a >= 0 && a < 72) return 0;
             if (a >= 72 && a < 144) return 1;
             if (a >= 144 && a < 216) return 2;
@@ -1102,7 +1369,12 @@
     
                     setTimeout(() => {
                         cerrarModalReporte();
-                        continuarJuego();
+                        if (!partidaActiva) {
+                            marcarNavegacionIntencional();
+                            window.location.href = '/juego/resultadoJuego';
+                        } else {
+                            continuarJuego();
+                        }
                     }, 2000);
 
                 } else {
@@ -1174,56 +1446,53 @@
             if (!isWaitingResponse || !preguntaActual) return;
 
             Array.from(opcionesEl.children).forEach(btn => btn.disabled = true);
-            mensajeEl.textContent = '⏰ ¡Tiempo agotado! Respuesta incorrecta.';
-            mensajeEl.style.background = '#fed7d7';
-            mensajeEl.style.color = '#742a2a';
-            mensajeEl.style.border = '1px solid #f56565';
+            
 
-            responderAutomaticamente();
+            mensajeEl.textContent = 'Finalizando partida...';
+            mensajeEl.style.background = '';
+            mensajeEl.style.color = '';
+            mensajeEl.style.border = '';
+
+            finalizarPartidaPorTimeout();
         }
 
-        async function responderAutomaticamente() {
-            const tiempoTranscurrido = Date.now() - preguntaStartTime;
-
+        async function finalizarPartidaPorTimeout() {
             try {
-                const r2 = await fetchJson('index.php?controller=juego&method=ajaxResponder', {
+
+                const r2 = await fetchJson('index.php?controller=juego&method=ajaxAbandonarPartida', {
                     id_juego: idJuego,
-                    id_pregunta: preguntaActual.id_pregunta,
-                    opcion: 'TIMEOUT',
-                    tiempo_respuesta: Math.round(tiempoTranscurrido / 1000)
+                    razon: 'timeout'
                 });
 
-                if (r2 && r2.success) {
-                    const result = r2.result || {};
 
-                    Array.from(opcionesEl.children).forEach(btn => {
-                        if (btn.dataset.opt === result.correcta) {
-                            btn.classList.add('correct');
-                        }
-                    });
+                partidaActiva = false;
+                btnCategoria.disabled = true;
+                setWheelText('FIN', 'Partida terminada');
+                
 
-                    if (result.puntaje !== undefined) {
-                        puntajeEl.textContent = result.puntaje;
-                    }
-
-                    if (r2.finalize === true || r2.game_over === true) {
-                        partidaActiva = false;
-                        mensajeEl.innerHTML = r2.mensaje ||
-                                ` <strong>¡Partida terminada!</strong> Se agotó el tiempo.</strong><br><small style="color: #666;">Serás redirigido a los resultados...</small>`;
-
-                        btnCategoria.disabled = true;
-                        setWheelText('FIN', 'Partida terminada');
-
-                        setTimeout(() => {
-                            marcarNavegacionIntencional();
-                            window.location.href = '/juego/resultadoJuego';
-                        }, 3000);
-                    } else {
-                        mostrarVistaIntermedia(result, r2);
-                    }
-                }
+                const resultFake = { correct: false };
+                const responseFake = { 
+                    explicacion: '⏰ El tiempo se agotó. La partida ha terminado.',
+                    game_over: true 
+                };
+                
+                mostrarVistaIntermediaFinal(resultFake, responseFake);
+                
             } catch (error) {
-                mensajeEl.textContent = 'Error de conexión. La partida ha terminado.';
+                console.error('Error al finalizar partida por timeout:', error);
+                
+
+                partidaActiva = false;
+                btnCategoria.disabled = true;
+                setWheelText('FIN', 'Partida terminada');
+                
+                const resultFake = { correct: false };
+                const responseFake = { 
+                    explicacion: 'El tiempo se agotó. La partida termino.',
+                    game_over: true 
+                };
+                
+                mostrarVistaIntermediaFinal(resultFake, responseFake);
             }
         }
 
@@ -1498,19 +1767,10 @@
                 if (r2.finalize === true || r2.game_over === true) {
                     detenerTemporizador();
                     partidaActiva = false;
-                    mensajeEl.style.background = '';
-                    mensajeEl.style.color = '';
-                    mensajeEl.style.border = '';
-                    mensajeEl.innerHTML = r2.mensaje ||
-                            ` <strong>¡Partida terminada!</strong> Respuesta incorrecta.</strong><br><small style="color: #666;">Serás redirigido a los resultados...</small>`;
-
                     btnCategoria.disabled = true;
                     setWheelText('FIN', 'Partida terminada');
-
-                    setTimeout(() => {
-                        marcarNavegacionIntencional();
-                        window.location.href = '/juego/resultadoJuego';
-                    }, 3000);
+                    
+                    mostrarVistaIntermediaFinal(result, r2);
                     return;
                 }
 
@@ -1528,6 +1788,9 @@
             const vistaIntermedla = document.getElementById('vistaIntermedia');
             const resultadoEl = document.getElementById('resultadoRespuesta');
             const explicacionEl = document.getElementById('explicacionRespuesta');
+            const iconoEl = document.getElementById('iconoResultado');
+            const btnSeguir = document.getElementById('btn-seguir-jugando');
+            const btnReportar = document.getElementById('btn-reportar-intermedia');
             
 
             preguntaBox.classList.add('hidden');
@@ -1535,11 +1798,13 @@
             
 
             if (result.correct) {
-                resultadoEl.innerHTML = '✅ ¡Respuesta Correcta! +1 punto';
-                resultadoEl.style.color = '#38a169';
+                iconoEl.className = 'resultado-icon correcto';
+                resultadoEl.innerHTML = '¡Respuesta Correcta!<br><small style="font-size: 1rem; opacity: 0.8;">+1 punto ganado</small>';
+                resultadoEl.className = 'resultado-titulo correcto';
             } else {
-                resultadoEl.innerHTML = '❌ Respuesta Incorrecta';
-                resultadoEl.style.color = '#e53e3e';
+                iconoEl.className = 'resultado-icon incorrecto';
+                resultadoEl.innerHTML = 'Respuesta Incorrecta<br><small style="font-size: 1rem; opacity: 0.8;">La respuesta era: ' + (response.respuesta_correcta || 'N/A') + '</small>';
+                resultadoEl.className = 'resultado-titulo incorrecto';
             }
             
 
@@ -1550,12 +1815,62 @@
                 explicacionEl.style.display = 'none';
             }
             
+            const btnSeguirTexto = btnSeguir.querySelector('.btn-text');
+            if (btnSeguirTexto) {
+                btnSeguirTexto.textContent = 'Seguir Jugando';
+            }
+            btnReportar.style.display = 'inline-flex';
+
+            mensajeEl.textContent = '';
+        }
+        
+        function mostrarVistaIntermediaFinal(result, response) {
+            const vistaIntermedla = document.getElementById('vistaIntermedia');
+            const resultadoEl = document.getElementById('resultadoRespuesta');
+            const explicacionEl = document.getElementById('explicacionRespuesta');
+            const iconoEl = document.getElementById('iconoResultado');
+            const btnSeguir = document.getElementById('btn-seguir-jugando');
+            const btnReportar = document.getElementById('btn-reportar-intermedia');
+            
+
+            preguntaBox.classList.add('hidden');
+            vistaIntermedla.classList.remove('hidden');
+            
+
+            iconoEl.className = 'resultado-icon terminado';
+            resultadoEl.innerHTML = '¡Partida Terminada!';
+            resultadoEl.className = 'resultado-titulo terminado';
+            
+            if (response.explicacion) {
+                explicacionEl.innerHTML = response.explicacion;
+                explicacionEl.style.display = 'block';
+            } else {
+                explicacionEl.style.display = 'none';
+            }
+            
+
+            const btnSeguirTexto = btnSeguir.querySelector('.btn-text');
+            const btnSeguirIcon = btnSeguir.querySelector('.btn-icon');
+            if (btnSeguirTexto) {
+                btnSeguirTexto.textContent = 'Ver Resultados';
+            }
+            if (btnSeguirIcon) {
+                btnSeguirIcon.textContent = '📊';
+            }
+            btnReportar.style.display = 'inline-flex';
 
             mensajeEl.textContent = '';
         }
         
         function continuarJuego() {
             const vistaIntermedla = document.getElementById('vistaIntermedia');
+            
+
+            if (!partidaActiva) {
+                marcarNavegacionIntencional();
+                window.location.href = '/juego/resultadoJuego';
+                return;
+            }
             
 
             vistaIntermedla.classList.add('hidden');
@@ -1625,7 +1940,7 @@
                 textareaDescripcion.addEventListener('input', actualizarContadorCaracteres);
                 textareaDescripcion.addEventListener('keyup', actualizarContadorCaracteres);
                 textareaDescripcion.addEventListener('paste', () => {
-                    setTimeout(actualizarContadorCaracteres, 10); // Delay para que el paste se procese
+                    setTimeout(actualizarContadorCaracteres, 10);
                 });
                 
 
@@ -1635,7 +1950,7 @@
                             if (modalReporte.style.display === 'flex') {
     
                                 actualizarContadorCaracteres();
-                                textareaDescripcion.value = ''; // Limpiar textarea
+                                textareaDescripcion.value = '';
                                 actualizarContadorCaracteres();
                             }
                         }
