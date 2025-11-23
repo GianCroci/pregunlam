@@ -873,14 +873,23 @@
                     </div>
                 </div>
                 <div id="preguntaBox" class="question-box hidden">
-                    <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
-                        <button type="button" class="btn outline small" id="btn-abrir-reporte">
-                            🚨 Reportar Pregunta
-                        </button>
-                    </div>
-
                     <div id="preguntaTexto" class="question-text"></div>
                     <div id="opciones"></div>
+                </div>
+                
+                <!-- Vista intermedia post-respuesta -->
+                <div id="vistaIntermedia" class="question-box hidden" style="text-align: center; padding: 24px;">
+                    <div id="resultadoRespuesta" class="result-message" style="font-size: 18px; font-weight: 600; margin-bottom: 20px;"></div>
+                    <div id="explicacionRespuesta" class="explanation-message" style="margin-bottom: 24px; color: var(--text-secondary);"></div>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <button type="button" class="btn outline" id="btn-reportar-intermedia" style="background: var(--warning); color: white; border: none;">
+                            🚨 Reportar Pregunta
+                        </button>
+                        <button type="button" class="btn primary" id="btn-seguir-jugando" style="background: var(--primary); color: white; border: none;">
+                            ▶️ Seguir Jugando
+                        </button>
+                    </div>
                 </div>
                 <div id="questionPlaceholder" class="question-placeholder">
                     <div class="placeholder-text">
@@ -912,13 +921,20 @@
         <form id="form-reporte">
             <input type="hidden" name="id_pregunta" id="input-id-pregunta" value="">
 
-            <textarea
-                    name="descripcion"
-                    rows="5"
-                    class="modal-reporte-textarea"
-                    placeholder="Ejemplo: la respuesta correcta es incorrecta, la pregunta está mal redactada, contiene contenido ofensivo..."
-                    required
-            ></textarea>
+            <div style="position: relative;">
+                <textarea
+                        name="descripcion"
+                        id="textarea-descripcion"
+                        rows="5"
+                        class="modal-reporte-textarea"
+                        placeholder="Ejemplo: la respuesta correcta es incorrecta, la pregunta está mal redactada, contiene contenido ofensivo..."
+                        required
+                        maxlength="500"
+                ></textarea>
+                <div id="contador-caracteres" style="position: absolute; bottom: 8px; right: 12px; font-size: 12px; color: #666;">
+                    0/10 min
+                </div>
+            </div>
 
             <div id="reporte-mensaje" class="reporte-msg"></div>
 
@@ -1027,6 +1043,31 @@
             }
         }
 
+
+        function actualizarContadorCaracteres() {
+            const textarea = document.getElementById('textarea-descripcion');
+            const contador = document.getElementById('contador-caracteres');
+            const btnEnviar = document.getElementById('btn-enviar-reporte');
+            
+            if (!textarea || !contador || !btnEnviar) return;
+            
+            const longitud = textarea.value.length;
+            const esValido = longitud >= 10;
+            
+            contador.textContent = `${longitud}/10 min`;
+            contador.style.color = esValido ? '#38a169' : (longitud > 0 ? '#ed8936' : '#666');
+            
+            btnEnviar.disabled = !esValido;
+            btnEnviar.style.opacity = esValido ? '1' : '0.6';
+            
+            if (longitud > 0 && longitud < 10) {
+                contador.textContent = `${longitud}/10 min - Faltan ${10 - longitud} caracteres`;
+            } else if (esValido) {
+                contador.textContent = `${longitud} caracteres ✓`;
+                contador.style.color = '#38a169';
+            }
+        }
+
         async function enviarReporte(e) {
             e.preventDefault();
 
@@ -1035,10 +1076,9 @@
             reporteMensaje.className = 'reporte-msg';
 
             const formData = new FormData(formReporte);
-
             const descripcionReporte = formData.get('descripcion');
 
-            if (!descripcionReporte || descripcionReporte.length < 10) {
+            if (!descripcionReporte || descripcionReporte.trim().length < 10) {
                 reporteMensaje.className = 'reporte-msg error';
                 reporteMensaje.textContent = 'La descripción debe tener al menos 10 caracteres.';
                 btnEnviarReporte.disabled = false;
@@ -1046,36 +1086,24 @@
             }
 
             try {
+                const idPregunta = formData.get('id_pregunta');
+                
                 const res = await fetchJson('index.php?controller=reporte&method=ajaxReportar', {
-                    id_pregunta: formData.get('id_pregunta'),
+                    id_pregunta: idPregunta,
                     descripcion: descripcionReporte
                 });
-
+                
                 btnEnviarReporte.disabled = false;
 
                 if (res && res.success) {
                     reporteMensaje.className = 'reporte-msg success';
                     reporteMensaje.textContent = res.message;
 
-                    detenerTemporizador();
-                    partidaActiva = false;
-                    isWaitingResponse = false;
-
-                    preguntaBox.classList.add('hidden');
-                    if (questionPlaceholder) questionPlaceholder.style.display = 'flex';
-                    btnCategoria.disabled = true;
-                    setWheelText('FIN', 'Partida terminada');
-
-                    mensajeEl.className = 'message-area';
-                    mensajeEl.style.background = '#c6f6d5';
-                    mensajeEl.style.color = '#22543d';
-                    mensajeEl.style.border = '1px solid #48bb78';
-                    mensajeEl.innerHTML = `<strong>¡Reporte enviado con éxito!</strong><br><small>La partida ha finalizado. Serás redirigido...</small>`;
-
+    
                     setTimeout(() => {
-                        marcarNavegacionIntencional();
-                        window.location.href = '/juego/resultadoJuego';
-                    }, 3000);
+                        cerrarModalReporte();
+                        continuarJuego();
+                    }, 2000);
 
                 } else {
                     reporteMensaje.className = 'reporte-msg error';
@@ -1085,7 +1113,15 @@
                 console.error('Error al enviar reporte:', error);
                 btnEnviarReporte.disabled = false;
                 reporteMensaje.className = 'reporte-msg error';
-                reporteMensaje.textContent = 'Error de conexión con el servidor de reportes.';
+                
+
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    reporteMensaje.textContent = 'Error de conexión. Verifica que el servidor esté funcionando.';
+                } else if (error.message.includes('JSON')) {
+                    reporteMensaje.textContent = 'Error al procesar respuesta del servidor.';
+                } else {
+                    reporteMensaje.textContent = 'Error de conexión con el servidor de reportes: ' + error.message;
+                }
             }
         }
 
@@ -1182,6 +1218,8 @@
                             marcarNavegacionIntencional();
                             window.location.href = '/juego/resultadoJuego';
                         }, 3000);
+                    } else {
+                        mostrarVistaIntermedia(result, r2);
                     }
                 }
             } catch (error) {
@@ -1456,12 +1494,6 @@
                     puntajeEl.textContent = result.puntaje;
                 }
 
-                if (result.correct) {
-                    mensajeEl.style.background = '';
-                    mensajeEl.style.color = '';
-                    mensajeEl.style.border = '';
-                    mensajeEl.textContent = ' ¡Respuesta correcta! +1 punto';
-                }
 
                 if (r2.finalize === true || r2.game_over === true) {
                     detenerTemporizador();
@@ -1482,20 +1514,8 @@
                     return;
                 }
 
-                if (result.correct === true) {
-                    setTimeout(() => {
-                        detenerTemporizador();
-                        preguntaBox.classList.add('hidden');
-                        const categoriaEl = document.getElementById('categoria');
-                        if (categoriaEl) categoriaEl.style.display = 'none';
-                        if (questionPlaceholder) questionPlaceholder.style.display = 'flex';
-                        mensajeEl.textContent = '';
-                        preguntaActual = null;
-                        isWaitingResponse = false;
-                        btnCategoria.disabled = false;
-                        setWheelText('GIRAR', 'Obtener categoría');
-                    }, 3000);
-                }
+
+                mostrarVistaIntermedia(result, r2);
 
             } catch (error) {
                 mensajeEl.textContent = 'Error de conexión. Intenta de nuevo.';
@@ -1504,11 +1524,125 @@
             }
         }
 
+        function mostrarVistaIntermedia(result, response) {
+            const vistaIntermedla = document.getElementById('vistaIntermedia');
+            const resultadoEl = document.getElementById('resultadoRespuesta');
+            const explicacionEl = document.getElementById('explicacionRespuesta');
+            
+
+            preguntaBox.classList.add('hidden');
+            vistaIntermedla.classList.remove('hidden');
+            
+
+            if (result.correct) {
+                resultadoEl.innerHTML = '✅ ¡Respuesta Correcta! +1 punto';
+                resultadoEl.style.color = '#38a169';
+            } else {
+                resultadoEl.innerHTML = '❌ Respuesta Incorrecta';
+                resultadoEl.style.color = '#e53e3e';
+            }
+            
+
+            if (response.explicacion) {
+                explicacionEl.innerHTML = response.explicacion;
+                explicacionEl.style.display = 'block';
+            } else {
+                explicacionEl.style.display = 'none';
+            }
+            
+
+            mensajeEl.textContent = '';
+        }
+        
+        function continuarJuego() {
+            const vistaIntermedla = document.getElementById('vistaIntermedia');
+            
+
+            vistaIntermedla.classList.add('hidden');
+            
+
+            detenerTemporizador();
+            timerContainer.classList.add('timer-hidden');
+            
+
+            const categoriaEl = document.getElementById('categoria');
+            if (categoriaEl) categoriaEl.style.display = 'none';
+            if (questionPlaceholder) questionPlaceholder.style.display = 'flex';
+            
+
+            preguntaBox.classList.add('hidden');
+            
+            preguntaActual = null;
+            isWaitingResponse = false;
+            btnCategoria.disabled = false;
+            setWheelText('GIRAR', 'Obtener categoría');
+        }
+        
+        function abrirModalReporteIntermedia() {
+            if (!preguntaActual) {
+                alert('No hay pregunta activa para reportar.');
+                return;
+            }
+            
+
+            inputIdPregunta.value = preguntaActual.id_pregunta;
+            
+            modalReporte.style.display = 'flex';
+            formReporte.reset();
+            
+            const textareaDescripcion = document.getElementById('textarea-descripcion');
+            if (textareaDescripcion) {
+                textareaDescripcion.value = '';
+                actualizarContadorCaracteres();
+            }
+            
+            reporteMensaje.textContent = '';
+            reporteMensaje.className = 'reporte-msg';
+        }
+
         btnCategoria.addEventListener('click', seleccionarCategoria);
-        if (btnAbrirReporte && modalReporte) {
-            btnAbrirReporte.addEventListener('click', abrirModalReporte);
+        
+
+        const btnSeguirJugando = document.getElementById('btn-seguir-jugando');
+        const btnReportarIntermedia = document.getElementById('btn-reportar-intermedia');
+        
+        if (btnSeguirJugando) {
+            btnSeguirJugando.addEventListener('click', continuarJuego);
+        }
+        
+        if (btnReportarIntermedia) {
+            btnReportarIntermedia.addEventListener('click', abrirModalReporteIntermedia);
+        }
+        
+
+        if (modalReporte) {
             btnCerrarReporte.addEventListener('click', cerrarModalReporte);
             formReporte.addEventListener('submit', enviarReporte);
+            
+
+            const textareaDescripcion = document.getElementById('textarea-descripcion');
+            if (textareaDescripcion) {
+                textareaDescripcion.addEventListener('input', actualizarContadorCaracteres);
+                textareaDescripcion.addEventListener('keyup', actualizarContadorCaracteres);
+                textareaDescripcion.addEventListener('paste', () => {
+                    setTimeout(actualizarContadorCaracteres, 10); // Delay para que el paste se procese
+                });
+                
+
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                            if (modalReporte.style.display === 'flex') {
+    
+                                actualizarContadorCaracteres();
+                                textareaDescripcion.value = ''; // Limpiar textarea
+                                actualizarContadorCaracteres();
+                            }
+                        }
+                    });
+                });
+                observer.observe(modalReporte, { attributes: true });
+            }
         }
     })();
 </script>
