@@ -104,6 +104,7 @@ class AdminModel
         SELECT u.id_usuario, u.usuario, u.mail, r.nombre AS rol, u.id_rol
         FROM usuarios u
         JOIN roles r ON u.id_rol = r.id_rol
+        WHERE u.verificado = true
         ORDER BY u.id_rol DESC, u.usuario ASC
     ";
         return $this->conexion->query($sql) ?? [];
