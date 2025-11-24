@@ -39,8 +39,8 @@ class LoginController
         $imagen = "/imagenes/" . $_POST['usuario'] . ".png";
         $id_rol_jugador = 1;
         $existeMail = $this->model->obtenerUsuario($_POST["mail"]);
-        $existeUsuario = $this->model->obtenerUsuario($_POST["usuario"]);
-        if ($_POST["contraseña"]===$_POST["confirmarContraseña"] && !$existeMail){
+        $existeUsuario = $this->model->obtenerUsuarioPorNombre($_POST["usuario"]);
+        if ($_POST["contraseña"]===$_POST["confirmarContraseña"] && !$existeMail && !$existeUsuario){
             $this->model->nuevo($_POST["nombre"], $_POST["apellido"], $_POST["usuario"], $_POST["nacimiento"], $imagen, $_POST["sexo"], $_POST["mail"], $ubicacion["address"]["country"], $ubicacion["address"]["state_district"], $hash, $token, $id_rol_jugador);
 
             $this->confirmacionDeUsuario($_POST["mail"], $token);
@@ -179,6 +179,52 @@ class LoginController
         }else{
             return false;
         }
+    }
+
+    public function verificarMailDisponible()
+    {
+        header('Content-Type: application/json');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $mail = $data['mail'] ?? null;
+
+        if (!$mail) {
+            echo json_encode(['existe' => false]);
+            exit;
+        }
+
+        $usuarioEncontrado = $this->model->obtenerUsuario($mail);
+
+        if ($usuarioEncontrado) {
+            echo json_encode(['existe' => true]);
+        } else {
+            echo json_encode(['existe' => false]);
+        }
+
+        exit;
+    }
+
+    public function verificarUsuarioDisponible()
+    {
+        header('Content-Type: application/json');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $usuario = $data['usuario'] ?? null;
+
+        if (!$usuario) {
+            echo json_encode(['disponible' => false]);
+            exit;
+        }
+
+        $usuarioEncontrado = $this->model->obtenerUsuarioPorNombre($usuario);
+
+        if ($usuarioEncontrado) {
+            echo json_encode(['disponible' => false]);
+        } else {
+            echo json_encode(['disponible' => true]);
+        }
+
+        exit;
     }
 
     public function redirectToIndex()

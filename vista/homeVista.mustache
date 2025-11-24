@@ -54,10 +54,10 @@
         <img class="avatar" src="{{imagen}}" alt="Imagen de perfil">
     </div>
     <div class="actions">
-        <a href="/?controller=juego" class="btn btn-primary">🎮 Jugar ahora</a>
-        <a href="/?controller=sugerencia&method=base" class="btn btn-suggest">✍️ Sugerir pregunta</a>
-        <a href="/?controller=usuario&method=ranking" class="btn btn-outline">🏆 Ver ranking</a>
-        <a href="/?controller=perfil" class="btn btn-outline">👤 Mi perfil</a>
+        <a href="/juego" class="btn btn-primary">🎮 Jugar ahora</a>
+        <a href="/sugerencia" class="btn btn-suggest">✍️ Sugerir pregunta</a>
+        <a href="/usuario/ranking" class="btn btn-outline">🏆 Ver ranking</a>
+        <a href="/usuario/perfil" class="btn btn-outline">👤 Mi perfil</a>
     </div>
 
     <div class="grid">
@@ -100,7 +100,7 @@
             {{/ranking}}
 
             <div class="spacer"></div>
-            <a href="/?controller=usuario&method=ranking" class="btn btn-outline">🔎 Ver todos</a>
+            <a href="/usuario/ranking" class="btn btn-outline">🔎 Ver todos</a>
         </div>
         <div class="card">
             <div class="card-title">

@@ -23,6 +23,7 @@ class HomeController
         $data = [
             "nombreUsuario" => $nombreUsuario,
             "imagen" => $imagen,
+            "id_usuario" => $_SESSION['id_usuario'],
             "id_rol" => $_SESSION['id_rol'] ?? 1
         ];
         $this->renderer->render("home", $data);

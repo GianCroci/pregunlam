@@ -1,100 +1,192 @@
-/*document.addEventListener('DOMContentLoaded', function() {
-
-    const loginForm = document.getElementById('registroForm');
-    const contraseña = document.getElementById('contraseña');
-    const confirmarContraseña = document.getElementById('confirmarContraseña');
-    const mensajeError = document.getElementById('mensajeError');
-
-    form.addEventListener('submit', function(event) {
-        if (contraseña.value !== confirmarContraseña.value) {
-            mensajeError.textContent = 'Las contraseñas no coinciden.';
-            event.preventDefault();
-        }else {
-            mensajeError.textContent = '';
-        }
-    })
-})*/
-
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 1. Selecciona los elementos que necesitas
+    // ========== ELEMENTOS DEL FORMULARIO ==========
     const form = document.getElementById('registroForm');
+
+    // Si no existe el formulario de registro, no ejecutar el script
+    if (!form) {
+        console.debug('Formulario de registro no encontrado — script omitido.');
+        return;
+    }
+
     const pass1 = document.getElementById('contraseña');
     const pass2 = document.getElementById('confirmarContraseña');
-    const mailInput = document.querySelector('input[name="mail"]')
+    const usuarioInput = document.getElementById('usuario');
+    const mailInput = document.getElementById('mail');
     const mensajeError = document.getElementById('mensajeError');
 
-    // 2. Escucha el evento 'submit' del formulario
-    form.addEventListener('submit', function(event) {
+    // ========== ELEMENTOS DEL MAPA ==========
+    const inputLatitud = document.getElementById('latitud');
+    const inputLongitud = document.getElementById('longitud');
 
+    // ========== VARIABLES DE VALIDACIÓN ==========
+    let usuarioValido = false;
+    let mailValido = false;
+    let ubicacionSeleccionada = false;
+    let map;
+    let marker;
+
+    // ========== INICIALIZAR MAPA ==========
+    try {
+        if (typeof L === 'undefined') {
+            console.debug('Leaflet no cargado — se omite inicialización del mapa.');
+        } else {
+            const mapEl = document.getElementById('mapa');
+            if (mapEl) {
+                // Inicializar mapa centrado en Buenos Aires
+                map = L.map('mapa').setView([-34.6699, -58.5635], 14);
+
+                // Añadir capa de OpenStreetMap
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                // Escuchar clics en el mapa
+                map.on('click', function(e) {
+                    const lat = e.latlng.lat;
+                    const lon = e.latlng.lng;
+
+                    // Actualizar inputs ocultos
+                    inputLatitud.value = lat;
+                    inputLongitud.value = lon;
+
+                    // Marcar ubicación como seleccionada
+                    ubicacionSeleccionada = true;
+                    mensajeError.textContent = '';
+
+                    console.log('✓ Ubicación seleccionada:', {lat, lon});
+
+                    // Poner/Mover el marcador
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng).addTo(map);
+                    }
+                    marker.bindPopup("Ubicación seleccionada").openPopup();
+                });
+            }
+        }
+    } catch (err) {
+        console.error('Error inicializando mapa:', err);
+    }
+
+    // ========== VALIDACIÓN 1: Nombre de usuario único ==========
+    usuarioInput.addEventListener('blur', async function() {
+        const usuario = this.value.trim();
+
+        if (usuario.length < 3) {
+            mensajeError.textContent = 'El nombre de usuario debe tener al menos 3 caracteres.';
+            usuarioValido = false;
+            return;
+        }
+
+        try {
+            const response = await fetch('/login/verificarUsuarioDisponible', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ usuario: usuario })
+            });
+
+            const data = await response.json();
+
+            if (data.disponible) {
+                mensajeError.textContent = '';
+                usuarioValido = true;
+                console.log('✓ Usuario disponible:', usuario);
+            } else {
+                mensajeError.textContent = 'Este nombre de usuario ya está en uso.';
+                usuarioValido = false;
+                console.log('✗ Usuario no disponible:', usuario);
+            }
+        } catch (error) {
+            console.error('Error al verificar usuario:', error);
+            mensajeError.textContent = 'Error al verificar disponibilidad del usuario.';
+            usuarioValido = false;
+        }
+    });
+
+    // ========== VALIDACIÓN 2: Email no registrado ==========
+    mailInput.addEventListener('blur', async function() {
+        const mail = this.value.trim();
+
+        // Validación básica de formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(mail)) {
+            mensajeError.textContent = 'Por favor, ingresa un email válido.';
+            mailValido = false;
+            return;
+        }
+
+        try {
+            const response = await fetch('/login/verificarMailDisponible', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ mail: mail })
+            });
+
+            const data = await response.json();
+
+            if (!data.existe) {
+                mensajeError.textContent = '';
+                mailValido = true;
+                console.log('✓ Email disponible:', mail);
+            } else {
+                mensajeError.textContent = 'Este email ya está registrado.';
+                mailValido = false;
+                console.log('✗ Email no disponible:', mail);
+            }
+        } catch (error) {
+            console.error('Error al verificar email:', error);
+            mensajeError.textContent = 'Error al verificar disponibilidad del email.';
+            mailValido = false;
+        }
+    });
+
+    // ========== VALIDACIÓN AL ENVIAR FORMULARIO ==========
+    form.addEventListener('submit', function(event) {
         event.preventDefault();
         mensajeError.textContent = '';
 
+        console.log('📋 Validando formulario:', {
+            usuarioValido,
+            mailValido,
+            ubicacionSeleccionada,
+            latitud: inputLatitud.value,
+            longitud: inputLongitud.value
+        });
 
+        // Verificar que el usuario fue validado
+        if (!usuarioValido) {
+            mensajeError.textContent = 'Por favor, verifica que el nombre de usuario esté disponible.';
+            return;
+        }
+
+        // Verificar que el email fue validado
+        if (!mailValido) {
+            mensajeError.textContent = 'Por favor, verifica que el email sea válido y no esté registrado.';
+            return;
+        }
+
+        // Verificar que se haya seleccionado ubicación
+        if (!ubicacionSeleccionada) {
+            mensajeError.textContent = 'Por favor, selecciona tu ubicación en el mapa.';
+            return;
+        }
+
+        // Verificar que las contraseñas coincidan
         if (pass1.value !== pass2.value) {
-
             mensajeError.textContent = 'Las contraseñas no coinciden.';
             return;
         }
-        verificarMailExistente(mailInput.value).then(function(emailExiste) {
-            if (emailExiste){
-                mensajeError.textContent = 'El mail ya está registrado.';
-                return;
-            }
-            form.submit();
-        });
+
+        console.log('✅ Todas las validaciones pasaron - Enviando formulario');
+
+        // Si todas las validaciones pasan, enviar el formulario
+        form.submit();
     });
 
-    function validarMailExistente(email, callback) {
-        fetch('/login/existeMail', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: email })
-        })
-            .then(response => responde.json())
-    }
-
-    // Guardar inicialización del mapa si existe el contenedor
-    const mapEl = document.getElementById('map'); // usa el id real que tengas
-    if (mapEl) {
-        try {
-            // ...tu código de inicialización del mapa (Leaflet u otro)...
-            const map = L.map('map').setView([0,0], 2); // ejemplo, sustituir por tu código
-            // resto de configuración del mapa...
-        } catch (e) {
-            console.error('Error inicializando mapa:', e);
-        }
-    } else {
-        console.debug('Mapa: contenedor #map no encontrado, inicialización omitida.');
-    }
-
-    // Guardar addEventListener con comprobación del elemento
-    const miBoton = document.getElementById('mi-boton'); // reemplaza por el id real
-    if (miBoton) {
-        miBoton.addEventListener('click', function(){ /* ... */ });
-    } else {
-        console.debug('registro.js: elemento #mi-boton no encontrado, listener omitido.');
-    }
-
-    // ejemplo para un botón; reemplaza '#mi-boton' por el id real que uses
-    const miBoton2 = document.getElementById('mi-boton2');
-    if (miBoton2) {
-        miBoton2.addEventListener('click', function (e) {
-            // ... tu lógica ...
-        });
-    } else {
-        console.debug('registro.js: elemento #mi-boton2 no encontrado — listener omitido.');
-    }
-
-    // Otras inicializaciones que dependan del DOM...
-    const boton = document.getElementById('mi-boton'); // usa el id real
-    if (boton) {
-        boton.addEventListener('click', function (e) {
-            // ...tu lógica...
-        });
-    } else {
-        console.debug('registro.js: elemento #mi-boton no encontrado, listener omitido.');
-    }
 });

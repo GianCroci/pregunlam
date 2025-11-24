@@ -29,8 +29,7 @@
         <img src="{{usuario.imagen}}" alt="avatar">
         <div>
             <div class="pf-name">
-                {{usuario.nombre}} {{usuario.apellido}}
-                {{^usuario.nombre}}{{usuario.username}}{{/usuario.nombre}}
+                {{usuario.username}}
             </div>
             <div class="pf-sub">
                 {{usuario.email}} · Nac.: {{usuario.fecha_nacimiento}}
