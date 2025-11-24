@@ -416,7 +416,8 @@
                 }
 
                 const fecha = new Date().toISOString().split('T')[0];
-                const year = document.getElementById('yearSelector').value || 'todos';
+                // CORRECCIÓN: Obtener el año desde el template o usar el actual
+                const year = '{{yearSeleccionado}}' || new Date().getFullYear();
                 pdf.save(`reporte-admin-${year}-${fecha}.pdf`);
 
                 boton.innerHTML = '✅ PDF Descargado';

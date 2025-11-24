@@ -220,37 +220,47 @@ class AdminController
         [$desde, $hasta] = $this->resolverRango();
 
         $stats = [
-            'usuarios_totales'      => $this->adminModel->contarUsuarios(),
-            'partidas'              => $this->adminModel->contarPartidas(),
-            'preguntas_totales'     => $this->adminModel->contarPreguntas(),
-            'preguntas_creadas'     => $this->adminModel->contarPreguntasCreadas($desde, $hasta),
-            'usuarios_nuevos'       => $this->adminModel->contarUsuariosNuevos($desde, $hasta),
-            'reportes_pendientes'   => $this->reporteModel->contarReportesPendientes(),
+            'usuarios_totales'        => $this->adminModel->contarUsuarios(),
+            'partidas'                => $this->adminModel->contarPartidas(),
+            'preguntas_totales'       => $this->adminModel->contarPreguntas(),
+            'preguntas_creadas'       => $this->adminModel->contarPreguntasCreadas($desde, $hasta),
+            'usuarios_nuevos'         => $this->adminModel->contarUsuariosNuevos($desde, $hasta),
+            'reportes_pendientes'     => $this->reporteModel->contarReportesPendientes(),
+            'sugerencias_pendientes'  => $this->adminModel->contarSugerenciasPendientes(),
         ];
 
+        $filtro = $_GET['filtro'] ?? 'mes';
+        $month = $_GET['month'] ?? date('n');
         $year = $_GET['year'] ?? date('Y');
         $categoria = $_GET['categoria'] ?? null;
 
-        $partidasPorMes = $this->adminModel->partidasPorMes($year, $categoria);
+        // Obtener datos según el filtro
+        if ($filtro === 'dia' && $month) {
+            $partidasData = $this->adminModel->partidasPorDia($year, $month, $categoria);
+        } else {
+            $partidasData = $this->adminModel->partidasPorMes($year, $categoria);
+        }
+
         $preguntasPorCategoria = $this->adminModel->preguntasPorCategoria($desde, $hasta);
 
         $data = [
-            'nombreUsuario'          => $_SESSION['nombreUsuario'] ?? 'Administrador',
-            'stats'                  => $stats,
-            'aciertos'               => $this->adminModel->aciertoPorUsuario(),
-            'porPais'                => $this->adminModel->usuariosPorPais(),
-            'porSexo'                => $this->adminModel->usuariosPorSexo(),
-            'porEdad'                => $this->adminModel->usuariosPorGrupoEdad(),
-            'partidasPorMes'         => $partidasPorMes,
-            'preguntasPorCategoria'  => $preguntasPorCategoria,
-            'rendimientoPorCategoria'=> $this->adminModel->rendimientoPorCategoria(),
-            'fecha_reporte'          => date('Y-m-d H:i:s'),
-            'periodo'                => $this->obtenerNombrePeriodo(),
-            'yearSeleccionado'       => $year,
-            'categoriaSeleccionada'  => $categoria,
-            'partidasPorMesJson'     => json_encode($partidasPorMes),
-            'preguntasCategoriaJson' => json_encode($preguntasPorCategoria)
+            'nombreUsuario'           => $_SESSION['nombreUsuario'] ?? 'Administrador',
+            'stats'                   => $stats,
+            'rendimientoPorCategoria' => $this->adminModel->rendimientoPorCategoria(),
+            'fecha_reporte'           => date('Y-m-d H:i:s'),
+            'periodo'                 => $this->obtenerNombrePeriodo(),
+
+            // Variables para el template
+            'filtroSeleccionado'      => $filtro,
+            'monthSeleccionado'       => $month,
+            'yearSeleccionado'        => $year,
+            'categoriaSeleccionada'   => $categoria,
+
+            // JSON para los gráficos - NOMBRES CORRECTOS
+            'partidasDataJson'        => json_encode($partidasData),
+            'preguntasCategoriaJson'  => json_encode($preguntasPorCategoria)
         ];
+
         $this->renderer->renderStandalone("adminPanelPDF", $data);
     }
 
