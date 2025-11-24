@@ -40,6 +40,16 @@ class LoginModel
         }
         return null;
     }
+    public function obtenerUsuarioPorNombre($usuario)
+    {
+        $sql = "SELECT * FROM usuarios WHERE usuario = '$usuario'";
+        $usuarioEncontrado = $this->conexion->query($sql);
+        if ($usuarioEncontrado) {
+            return $usuarioEncontrado;
+        }
+        return null;
+    }
+
 
     public function verificarMail($tokenRecibido)
     {

@@ -22,7 +22,7 @@ class UsuarioController
             'id_usuario'       => $idUsuario,
             'nombre'           => $_SESSION['usuario'] ?? 'Usuario',
             'apellido'         => '',
-            'username'         => $_SESSION['usuario'] ?? 'usuario',
+            'username'         => $_SESSION['nombreUsuario'] ?? 'usuario',
             'email'            => $_SESSION['mail'] ?? '',
             'imagen'           => $_SESSION['imagen'] ?? '/imagenes/default.png',
             'fecha_nacimiento' => '',
