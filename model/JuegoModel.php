@@ -137,17 +137,17 @@ class JuegoModel
             return ['error' => 'No autorizado para jugar esta partida'];
         }
 
-        // Mapeo de índice de ruleta (0-4) a id_categoria real (1-5)
         $catId = null;
         if ($categoriaRuleta !== null) {
             $categoriaRuleta = intval($categoriaRuleta);
             $map = [
-                0 => 1, // Ingeniería e Investigaciones Tecnológicas
-                1 => 2, // Humanidades y Ciencias Sociales
-                2 => 3, // Ciencias Económicas
-                3 => 4, // Derecho y Ciencia Política
+                0 => 4, // Derecho y Ciencia Política
+                1 => 3, // Ciencias Económicas
+                2 => 2, // Humanidades y Ciencias Sociales
+                3 => 1, // Ingeniería e Investigaciones Tecnológicas
                 4 => 5  // Ciencias de la Salud
             ];
+
             if (array_key_exists($categoriaRuleta, $map)) {
                 $catId = $map[$categoriaRuleta];
             }
@@ -161,6 +161,7 @@ class JuegoModel
 
         return ['pregunta' => $pregunta];
     }
+
 
     public function procesarRespuesta(int $id_juego, int $id_usuario, int $id_pregunta, string $opcion, int $tiempo_respuesta = 0)
     {

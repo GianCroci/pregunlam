@@ -841,9 +841,9 @@
             padding: 32px 24px;
             background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
             border-radius: 20px;
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(72, 187, 120, 0.1);
+            box-shadow:
+                    0 20px 40px rgba(0, 0, 0, 0.1),
+                    0 0 0 1px rgba(72, 187, 120, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -874,9 +874,9 @@
 
         .resultado-icon.correcto {
             background: linear-gradient(135deg, #48bb78, #38a169);
-            box-shadow: 
-                0 8px 25px rgba(72, 187, 120, 0.3),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+            box-shadow:
+                    0 8px 25px rgba(72, 187, 120, 0.3),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.3);
         }
 
         .resultado-icon.correcto::after {
@@ -888,9 +888,9 @@
 
         .resultado-icon.incorrecto {
             background: linear-gradient(135deg, #f56565, #e53e3e);
-            box-shadow: 
-                0 8px 25px rgba(245, 101, 101, 0.3),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+            box-shadow:
+                    0 8px 25px rgba(245, 101, 101, 0.3),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.3);
         }
 
         .resultado-icon.incorrecto::after {
@@ -902,9 +902,9 @@
 
         .resultado-icon.terminado {
             background: linear-gradient(135deg, #f56565, #e53e3e);
-            box-shadow: 
-                0 8px 25px rgba(245, 101, 101, 0.3),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+            box-shadow:
+                    0 8px 25px rgba(245, 101, 101, 0.3),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.3);
         }
 
         .resultado-icon.terminado::after {
@@ -915,15 +915,15 @@
         }
 
         @keyframes iconPulse {
-            0% { 
+            0% {
                 transform: scale(0.3) rotate(-180deg);
                 opacity: 0;
             }
-            70% { 
+            70% {
                 transform: scale(1.1) rotate(10deg);
                 opacity: 1;
             }
-            100% { 
+            100% {
                 transform: scale(1) rotate(0deg);
                 opacity: 1;
             }
@@ -1103,11 +1103,11 @@
             <div class="category-selector">
                 <div class="wheel-container">
                     <div id="ruletaVisual" class="wheel">
-                        <div class="wheel-segment seg-1">📚</div>
-                        <div class="wheel-segment seg-2">⚙️</div>
-                        <div class="wheel-segment seg-3">💼</div>
-                        <div class="wheel-segment seg-4">⚖️</div>
-                        <div class="wheel-segment seg-5">❤️</div>
+                        <div class="wheel-segment seg-1"></div>
+                        <div class="wheel-segment seg-2"></div>
+                        <div class="wheel-segment seg-3"></div>
+                        <div class="wheel-segment seg-4"></div>
+                        <div class="wheel-segment seg-5"></div>
                     </div>
 
                     <button id="btnCategoria" class="wheel-center">
@@ -1132,27 +1132,27 @@
                     <div id="preguntaTexto" class="question-text"></div>
                     <div id="opciones"></div>
                 </div>
-                
+
 
                 <div id="vistaIntermedia" class="vista-intermedia-container hidden">
                     <div class="vista-intermedia-card">
                         <!-- Icono de resultado -->
                         <div id="iconoResultado" class="resultado-icon"></div>
-                        
+
                         <!-- Mensaje principal -->
                         <div id="resultadoRespuesta" class="resultado-titulo"></div>
-                        
+
                         <!-- Explicación -->
                         <div id="explicacionRespuesta" class="explicacion-contenido"></div>
-                        
+
                         <!-- Botones de acción -->
                         <div class="botones-accion">
                             <button type="button" id="btn-reportar-intermedia" class="btn-reporte">
-                              
+
                                 <span class="btn-text">Reportar Pregunta</span>
                             </button>
                             <button type="button" id="btn-seguir-jugando" class="btn-continuar">
-                          
+
                                 <span class="btn-text">Continuar</span>
                             </button>
                         </div>
@@ -1315,18 +1315,18 @@
             const textarea = document.getElementById('textarea-descripcion');
             const contador = document.getElementById('contador-caracteres');
             const btnEnviar = document.getElementById('btn-enviar-reporte');
-            
+
             if (!textarea || !contador || !btnEnviar) return;
-            
+
             const longitud = textarea.value.length;
             const esValido = longitud >= 10;
-            
+
             contador.textContent = `${longitud}/10 min`;
             contador.style.color = esValido ? '#38a169' : (longitud > 0 ? '#ed8936' : '#666');
-            
+
             btnEnviar.disabled = !esValido;
             btnEnviar.style.opacity = esValido ? '1' : '0.6';
-            
+
             if (longitud > 0 && longitud < 10) {
                 contador.textContent = `${longitud}/10 min - Faltan ${10 - longitud} caracteres`;
             } else if (esValido) {
@@ -1354,19 +1354,19 @@
 
             try {
                 const idPregunta = formData.get('id_pregunta');
-                
+
                 const res = await fetchJson('index.php?controller=reporte&method=ajaxReportar', {
                     id_pregunta: idPregunta,
                     descripcion: descripcionReporte
                 });
-                
+
                 btnEnviarReporte.disabled = false;
 
                 if (res && res.success) {
                     reporteMensaje.className = 'reporte-msg success';
                     reporteMensaje.textContent = res.message;
 
-    
+
                     setTimeout(() => {
                         cerrarModalReporte();
                         if (!partidaActiva) {
@@ -1385,7 +1385,7 @@
                 console.error('Error al enviar reporte:', error);
                 btnEnviarReporte.disabled = false;
                 reporteMensaje.className = 'reporte-msg error';
-                
+
 
                 if (error.name === 'TypeError' && error.message.includes('fetch')) {
                     reporteMensaje.textContent = 'Error de conexión. Verifica que el servidor esté funcionando.';
@@ -1446,7 +1446,7 @@
             if (!isWaitingResponse || !preguntaActual) return;
 
             Array.from(opcionesEl.children).forEach(btn => btn.disabled = true);
-            
+
 
             mensajeEl.textContent = 'Finalizando partida...';
             mensajeEl.style.background = '';
@@ -1468,30 +1468,30 @@
                 partidaActiva = false;
                 btnCategoria.disabled = true;
                 setWheelText('FIN', 'Partida terminada');
-                
+
 
                 const resultFake = { correct: false };
-                const responseFake = { 
+                const responseFake = {
                     explicacion: '⏰ El tiempo se agotó. La partida ha terminado.',
-                    game_over: true 
+                    game_over: true
                 };
-                
+
                 mostrarVistaIntermediaFinal(resultFake, responseFake);
-                
+
             } catch (error) {
                 console.error('Error al finalizar partida por timeout:', error);
-                
+
 
                 partidaActiva = false;
                 btnCategoria.disabled = true;
                 setWheelText('FIN', 'Partida terminada');
-                
+
                 const resultFake = { correct: false };
-                const responseFake = { 
+                const responseFake = {
                     explicacion: 'El tiempo se agotó. La partida termino.',
-                    game_over: true 
+                    game_over: true
                 };
-                
+
                 mostrarVistaIntermediaFinal(resultFake, responseFake);
             }
         }
@@ -1769,7 +1769,7 @@
                     partidaActiva = false;
                     btnCategoria.disabled = true;
                     setWheelText('FIN', 'Partida terminada');
-                    
+
                     mostrarVistaIntermediaFinal(result, r2);
                     return;
                 }
@@ -1791,11 +1791,11 @@
             const iconoEl = document.getElementById('iconoResultado');
             const btnSeguir = document.getElementById('btn-seguir-jugando');
             const btnReportar = document.getElementById('btn-reportar-intermedia');
-            
+
 
             preguntaBox.classList.add('hidden');
             vistaIntermedla.classList.remove('hidden');
-            
+
 
             if (result.correct) {
                 iconoEl.className = 'resultado-icon correcto';
@@ -1806,7 +1806,7 @@
                 resultadoEl.innerHTML = 'Respuesta Incorrecta<br><small style="font-size: 1rem; opacity: 0.8;">La respuesta era: ' + (response.respuesta_correcta || 'N/A') + '</small>';
                 resultadoEl.className = 'resultado-titulo incorrecto';
             }
-            
+
 
             if (response.explicacion) {
                 explicacionEl.innerHTML = response.explicacion;
@@ -1814,7 +1814,7 @@
             } else {
                 explicacionEl.style.display = 'none';
             }
-            
+
             const btnSeguirTexto = btnSeguir.querySelector('.btn-text');
             if (btnSeguirTexto) {
                 btnSeguirTexto.textContent = 'Seguir Jugando';
@@ -1823,7 +1823,7 @@
 
             mensajeEl.textContent = '';
         }
-        
+
         function mostrarVistaIntermediaFinal(result, response) {
             const vistaIntermedla = document.getElementById('vistaIntermedia');
             const resultadoEl = document.getElementById('resultadoRespuesta');
@@ -1831,23 +1831,23 @@
             const iconoEl = document.getElementById('iconoResultado');
             const btnSeguir = document.getElementById('btn-seguir-jugando');
             const btnReportar = document.getElementById('btn-reportar-intermedia');
-            
+
 
             preguntaBox.classList.add('hidden');
             vistaIntermedla.classList.remove('hidden');
-            
+
 
             iconoEl.className = 'resultado-icon terminado';
             resultadoEl.innerHTML = '¡Partida Terminada!';
             resultadoEl.className = 'resultado-titulo terminado';
-            
+
             if (response.explicacion) {
                 explicacionEl.innerHTML = response.explicacion;
                 explicacionEl.style.display = 'block';
             } else {
                 explicacionEl.style.display = 'none';
             }
-            
+
 
             const btnSeguirTexto = btnSeguir.querySelector('.btn-text');
             const btnSeguirIcon = btnSeguir.querySelector('.btn-icon');
@@ -1861,79 +1861,79 @@
 
             mensajeEl.textContent = '';
         }
-        
+
         function continuarJuego() {
             const vistaIntermedla = document.getElementById('vistaIntermedia');
-            
+
 
             if (!partidaActiva) {
                 marcarNavegacionIntencional();
                 window.location.href = '/juego/resultadoJuego';
                 return;
             }
-            
+
 
             vistaIntermedla.classList.add('hidden');
-            
+
 
             detenerTemporizador();
             timerContainer.classList.add('timer-hidden');
-            
+
 
             const categoriaEl = document.getElementById('categoria');
             if (categoriaEl) categoriaEl.style.display = 'none';
             if (questionPlaceholder) questionPlaceholder.style.display = 'flex';
-            
+
 
             preguntaBox.classList.add('hidden');
-            
+
             preguntaActual = null;
             isWaitingResponse = false;
             btnCategoria.disabled = false;
             setWheelText('GIRAR', 'Obtener categoría');
         }
-        
+
         function abrirModalReporteIntermedia() {
             if (!preguntaActual) {
                 alert('No hay pregunta activa para reportar.');
                 return;
             }
-            
+
 
             inputIdPregunta.value = preguntaActual.id_pregunta;
-            
+
             modalReporte.style.display = 'flex';
             formReporte.reset();
-            
+
             const textareaDescripcion = document.getElementById('textarea-descripcion');
             if (textareaDescripcion) {
                 textareaDescripcion.value = '';
                 actualizarContadorCaracteres();
             }
-            
+
             reporteMensaje.textContent = '';
             reporteMensaje.className = 'reporte-msg';
         }
 
         btnCategoria.addEventListener('click', seleccionarCategoria);
-        
+
 
         const btnSeguirJugando = document.getElementById('btn-seguir-jugando');
         const btnReportarIntermedia = document.getElementById('btn-reportar-intermedia');
-        
+
         if (btnSeguirJugando) {
             btnSeguirJugando.addEventListener('click', continuarJuego);
         }
-        
+
         if (btnReportarIntermedia) {
             btnReportarIntermedia.addEventListener('click', abrirModalReporteIntermedia);
         }
-        
+
 
         if (modalReporte) {
             btnCerrarReporte.addEventListener('click', cerrarModalReporte);
             formReporte.addEventListener('submit', enviarReporte);
-            
+
 
             const textareaDescripcion = document.getElementById('textarea-descripcion');
             if (textareaDescripcion) {
@@ -1942,13 +1942,13 @@
                 textareaDescripcion.addEventListener('paste', () => {
                     setTimeout(actualizarContadorCaracteres, 10);
                 });
-                
+
 
                 const observer = new MutationObserver((mutations) => {
                     mutations.forEach((mutation) => {
                         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
                             if (modalReporte.style.display === 'flex') {
-    
+
                                 actualizarContadorCaracteres();
                                 textareaDescripcion.value = '';
                                 actualizarContadorCaracteres();
