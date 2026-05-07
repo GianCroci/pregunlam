@@ -127,14 +127,6 @@ El proyecto sigue el patrón **MVC** implementado en PHP puro:
 
 ---
 
-## 👥 Integrantes
-
-Proyecto grupal — Programación Web 2, UNLaM.
-
-- [Gian Croci](https://github.com/GianCroci)
-
----
-
 ## 📄 Licencia
 
 Este proyecto fue desarrollado con fines académicos.
